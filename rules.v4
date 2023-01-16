@@ -32,7 +32,7 @@ COMMIT
 -A trap-scan -m set --match-set scanner-ipv4-set src -j DROP_LOG
 -A trap-scan -j SET --add-set scanner-ipv4-set src
 -A trap-scan -j DROP_LOG
--A DROP_LOG -j LOG --log-level warning --log-prefix "[mangle] DROP: "
+-A DROP_LOG -j LOG --log-level warning --log-prefix "[raw] DROP: "
 -A DROP_LOG -j DROP
 COMMIT
 # Completed on Sat Jan 14 01:45:15 HKT 2023
