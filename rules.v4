@@ -7,10 +7,10 @@
 -A PREROUTING -i eth0 -j scaner
 -A scaner -p tcp ! --syn -m conntrack ! --ctstate RELATED,ESTABLISHED -j trap-scan
 -A scaner -p udp -m conntrack ! --ctstate RELATED,ESTABLISHED -j scaner-detect
--A scaner-detect -m set ! --match-set ipv4-pub-udp-port-set dst -j trap-scan
+-A scaner-detect -m set ! --match-set ipv4-pub-udp-ports dst -j trap-scan
 -A trap-scan -j LOG --log-level warning --log-prefix "[mangle] trap-scan: "
--A trap-scan -m set --match-set scanner-ipv4-set src -j DROP_LOG
--A trap-scan -j SET --add-set scanner-ipv4-set src
+-A trap-scan -m set --match-set ipv4-scanners src -j DROP_LOG
+-A trap-scan -j SET --add-set ipv4-scanners src
 -A trap-scan -j DROP_LOG
 -A DROP_LOG -j LOG --log-level warning --log-prefix "[mangle] DROP: "
 -A DROP_LOG -j DROP
@@ -25,12 +25,12 @@ COMMIT
 -A PREROUTING -i eth0 -j scaner
 -A scaner -m addrtype ! --dst-type LOCAL -j DROP
 -A scaner -p udp -j LOG --log-level warning --log-prefix "UDP IN: "
--A scaner -m set --match-set scanner-ipv4-set src ! --update-counters --packets-gt 3 -j DROP_LOG
+-A scaner -m set --match-set ipv4-scanners src ! --update-counters --packets-gt 3 -j DROP_LOG
 -A scaner -p tcp --syn -j scaner-detect
--A scaner-detect -m set ! --match-set ipv4-pub-tcp-port-set dst -j trap-scan
+-A scaner-detect -m set ! --match-set ipv4-pub-tcp-ports dst -j trap-scan
 -A trap-scan -j LOG --log-level warning --log-prefix "[raw] trap-scan: "
--A trap-scan -m set --match-set scanner-ipv4-set src -j DROP_LOG
--A trap-scan -j SET --add-set scanner-ipv4-set src
+-A trap-scan -m set --match-set ipv4-scanners src -j DROP_LOG
+-A trap-scan -j SET --add-set ipv4-scanners src
 -A trap-scan -j DROP_LOG
 -A DROP_LOG -j LOG --log-level warning --log-prefix "[raw] DROP: "
 -A DROP_LOG -j DROP
