@@ -1,12 +1,12 @@
 # Created by IriKa Qiu on Sat Jan 14 01:45:15 HKT 2023
 *mangle
-:for-eth0 - [0:0]
+:scaner - [0:0]
 :scaner-detect - [0:0]
 :trap-scan - [0:0]
 :DROP_LOG - [0:0]
--A PREROUTING -i eth0 -j for-eth0
--A for-eth0 -p tcp ! --syn -m conntrack ! --ctstate RELATED,ESTABLISHED -j trap-scan
--A for-eth0 -p udp -m conntrack ! --ctstate RELATED,ESTABLISHED -j scaner-detect
+-A PREROUTING -i eth0 -j scaner
+-A scaner -p tcp ! --syn -m conntrack ! --ctstate RELATED,ESTABLISHED -j trap-scan
+-A scaner -p udp -m conntrack ! --ctstate RELATED,ESTABLISHED -j scaner-detect
 -A scaner-detect -m set ! --match-set ipv4-pub-udp-port-set dst -j trap-scan
 -A trap-scan -j LOG --log-level warning --log-prefix "[mangle] trap-scan: "
 -A trap-scan -m set --match-set scanner-ipv4-set src -j DROP_LOG
@@ -18,15 +18,15 @@ COMMIT
 # Completed on Sat Jan 14 01:45:15 HKT 2023
 # Created by IriKa Qiu on Sat Jan 14 01:45:15 HKT 2023
 *raw
-:for-eth0 - [0:0]
+:scaner - [0:0]
 :scaner-detect - [0:0]
 :trap-scan - [0:0]
 :DROP_LOG - [0:0]
--A PREROUTING -i eth0 -j for-eth0
--A for-eth0 -m addrtype ! --dst-type LOCAL -j DROP
--A for-eth0 -p udp -j LOG --log-level warning --log-prefix "UDP IN: "
--A for-eth0 -m set --match-set scanner-ipv4-set src ! --update-counters --packets-gt 3 -j DROP_LOG
--A for-eth0 -p tcp --syn -j scaner-detect
+-A PREROUTING -i eth0 -j scaner
+-A scaner -m addrtype ! --dst-type LOCAL -j DROP
+-A scaner -p udp -j LOG --log-level warning --log-prefix "UDP IN: "
+-A scaner -m set --match-set scanner-ipv4-set src ! --update-counters --packets-gt 3 -j DROP_LOG
+-A scaner -p tcp --syn -j scaner-detect
 -A scaner-detect -m set ! --match-set ipv4-pub-tcp-port-set dst -j trap-scan
 -A trap-scan -j LOG --log-level warning --log-prefix "[raw] trap-scan: "
 -A trap-scan -m set --match-set scanner-ipv4-set src -j DROP_LOG
